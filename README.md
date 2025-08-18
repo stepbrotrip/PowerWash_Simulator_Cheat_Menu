@@ -11,3 +11,5 @@ Trippy's Deluxe Washer
 [+] flight  
 [+] instant clean  
 [+] increase money
+[+] infinite soap
+[+] max stars
