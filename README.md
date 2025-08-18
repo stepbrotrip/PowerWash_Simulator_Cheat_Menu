@@ -6,10 +6,9 @@ If you have any ideas for further additions or what the next game should be, ple
 
 ## Features
 
-Trippy's Deluxe Washer  
-[+] dirt ESP (extended highlight duration)  
-[+] flight  
-[+] instant clean  
-[+] increase money
-[+] infinite soap
-[+] max stars
+- Dirt ESP (extended highlight duration)  
+- Flight  
+- Instant Clean  
+- Increase Money  
+- Infinite Soap  
+- Max Stars
