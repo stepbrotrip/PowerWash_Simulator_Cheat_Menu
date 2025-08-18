@@ -87,34 +87,44 @@ class Tooltip:
 def toggle_menu():
     global menu_visible
     if menu_visible:
-        root.withdraw()  # Hide window
+        root.withdraw()
         menu_visible = False
     else:
-        root.deiconify()  # Show window
-        root.lift()  # Bring it to the front
-        root.focus_force()  # Focus the window
+        root.deiconify()
+        root.update_idletasks()  # Ensure geometry updates
+        root.lift()               # Bring to top of stacking order
+        root.attributes('-topmost', True)  # Force on top
+        root.after(100, lambda: root.attributes('-topmost', False))  # Reset topmost
+        root.focus_force()        # Give it focus
         menu_visible = True
 
-kb.add_hotkey("insert", toggle_menu)
 
+kb.add_hotkey("insert", toggle_menu)
 def infinite_soap():
     global soap_patch_orig, soap_patch_addr
     if not soap_patch_addr:
-        soap_patch_addr = gameassembly_dll+0x915DB5
-    if not getattr(infinite_soap, "active", False):
+        soap_patch_addr = gameassembly_dll + 0x915DB5
+
+    if not hasattr(infinite_soap, "active"):
+        infinite_soap.active = False
+
+    if not infinite_soap.active:
         soap_patch_orig = utility.nopBytes(handle, soap_patch_addr, 5)
-        infinite_soap.activate = True
+        infinite_soap.active = True
         infinite_soap_active.set(True)
+        print("Infinite Soap activated")
     else:
         if soap_patch_orig:
             utility.patchBytes(handle, soap_patch_orig.hex(), soap_patch_addr, 5)
         infinite_soap.active = False
         infinite_soap_active.set(False)
+        print("Infinite Soap deactivated")
+
 
 def toggle_stars_write():
     global stars_patch_orig, stars_patch_addr
-    stars_base_addr = gameassembly_dll + 0x04406548
-    stars_offsets = [0x78,0x48,0xB8,0x40,0x10,0xD0,0x14]
+    stars_base_addr = gameassembly_dll + 0x043431D8
+    stars_offsets = [0xB8,0x10,0xD8,0x18,0x10,0x20,0x14]
     stars_addr = utility.findDMAddy(handle, stars_base_addr, stars_offsets)
 
     if not stars_patch_addr:
@@ -220,7 +230,7 @@ def increase_money():
     bytesRead = ctypes.c_size_t()
     if kernel32.ReadProcessMemory(handle, ctypes.c_void_p(addr), ctypes.byref(buf), ctypes.sizeof(buf), ctypes.byref(bytesRead)):
         print("Money:", buf.value)
-        new_val = ctypes.c_float(buf.value + 50.0)
+        new_val = ctypes.c_float(buf.value + 500.0)
         kernel32.WriteProcessMemory(handle, ctypes.c_void_p(addr), ctypes.byref(new_val), ctypes.sizeof(new_val), None)
     else:
         print("Failed to read memory for money")
@@ -288,7 +298,7 @@ def load_menu():
     Tooltip(clean_btn, "Automatically cleans surfaces instantly. (May lag game, May cause crashes)", delay=500)
     Tooltip(fly_toggle, "Simple fly: SPACE = go up, V = go down", delay=500)
     Tooltip(long_highlight_toggle, "Increases the highlight length to effectively make dirt ESP.", delay=500)
-    Tooltip(add_money_btn, "Increases your money by 50. Must change money or reset game to see it in the menu.", delay=500)
+    Tooltip(add_money_btn, "Increases your money by 500. Must change money or reset game to see it in the menu.", delay=500)
 
     cheat_loop()
 
