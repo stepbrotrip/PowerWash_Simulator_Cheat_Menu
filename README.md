@@ -11,3 +11,4 @@ Trippy's Deluxe Washer
 [+] flight
 [+] instant clean
 [+] increase money
+##
